@@ -76,6 +76,7 @@
   <transforms xmlns="http://www.xilinx.com/XMLSchema">
     <transform xil_pn:end_ts="1346402758" xil_pn:name="TRAN_copyInitialToAbstractSimulation" xil_pn:start_ts="1346402758">
       <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
     </transform>
     <transform xil_pn:end_ts="1346402758" xil_pn:in_ck="-5648158229109777827" xil_pn:name="TRAN_copyAbstractToPostAbstractSimulation" xil_pn:start_ts="1346402758">
       <status xil_pn:value="SuccessfullyRun"/>
@@ -117,6 +118,7 @@
     </transform>
     <transform xil_pn:end_ts="1346402317" xil_pn:name="TRAN_copyInitialToXSTAbstractSynthesis" xil_pn:start_ts="1346402317">
       <status xil_pn:value="SuccessfullyRun"/>
+      <status xil_pn:value="ReadyToRun"/>
     </transform>
     <transform xil_pn:end_ts="1346402359" xil_pn:name="TRAN_schematicsToHdl" xil_pn:prop_ck="-1887954682842244139" xil_pn:start_ts="1346402359">
       <status xil_pn:value="SuccessfullyRun"/>
@@ -142,12 +144,10 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1346402381" xil_pn:in_ck="-5648158229109777827" xil_pn:name="TRANEXT_xstsynthesize_spartan6" xil_pn:prop_ck="4684677307114230627" xil_pn:start_ts="1346402359">
+    <transform xil_pn:end_ts="1346403344" xil_pn:in_ck="-5648158229109777827" xil_pn:name="TRANEXT_xstsynthesize_spartan6" xil_pn:prop_ck="4684677307114230627" xil_pn:start_ts="1346403322">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
-      <status xil_pn:value="OutOfDateForOutputs"/>
-      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="MT32_GEN.lso"/>
       <outfile xil_pn:name="MT32_GEN.ngc"/>
       <outfile xil_pn:name="MT32_GEN.ngr"/>
