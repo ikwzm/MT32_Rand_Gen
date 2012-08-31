@@ -41,6 +41,7 @@
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_UNROUTES" xil_pn:name="MT32_GEN.unroutes" xil_pn:subbranch="Par"/>
     <file xil_pn:fileType="FILE_XPI" xil_pn:name="MT32_GEN.xpi"/>
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_XST" xil_pn:name="MT32_GEN.xst"/>
+    <file xil_pn:fileType="FILE_HTML" xil_pn:name="MT32_GEN_envsettings.html"/>
     <file xil_pn:fileType="FILE_NCD" xil_pn:name="MT32_GEN_guide.ncd" xil_pn:origination="imported"/>
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_MAP_REPORT" xil_pn:name="MT32_GEN_map.map" xil_pn:subbranch="Map"/>
     <file xil_pn:branch="Implementation" xil_pn:fileType="FILE_MAP_REPORT" xil_pn:name="MT32_GEN_map.mrp" xil_pn:subbranch="Map"/>
@@ -85,9 +86,9 @@
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/components.vhd"/>
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram.vhd"/>
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram_xilinx_auto_select.vhd"/>
-      <outfile xil_pn:name="../../../../src/main/mt32_1w1r_ram.vhd"/>
-      <outfile xil_pn:name="../../../../src/main/mt32_gen.vhd"/>
-      <outfile xil_pn:name="../../../../src/test/test_bench.vhd"/>
+      <outfile xil_pn:name="../../../../src/main/vhdl/mt32_1w1r_ram.vhd"/>
+      <outfile xil_pn:name="../../../../src/main/vhdl/mt32_gen.vhd"/>
+      <outfile xil_pn:name="../../../../src/test/vhdl/test_bench.vhd"/>
     </transform>
     <transform xil_pn:end_ts="1346402758" xil_pn:name="TRAN_xawsToSimhdl" xil_pn:prop_ck="-1102852127413501258" xil_pn:start_ts="1346402758">
       <status xil_pn:value="SuccessfullyRun"/>
@@ -108,9 +109,9 @@
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/components.vhd"/>
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram.vhd"/>
       <outfile xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram_xilinx_auto_select.vhd"/>
-      <outfile xil_pn:name="../../../../src/main/mt32_1w1r_ram.vhd"/>
-      <outfile xil_pn:name="../../../../src/main/mt32_gen.vhd"/>
-      <outfile xil_pn:name="../../../../src/test/test_bench.vhd"/>
+      <outfile xil_pn:name="../../../../src/main/vhdl/mt32_1w1r_ram.vhd"/>
+      <outfile xil_pn:name="../../../../src/main/vhdl/mt32_gen.vhd"/>
+      <outfile xil_pn:name="../../../../src/test/vhdl/test_bench.vhd"/>
     </transform>
     <transform xil_pn:end_ts="1346403144" xil_pn:in_ck="-5648158229109777827" xil_pn:name="TRAN_ISimulateBehavioralModelRunFuse" xil_pn:prop_ck="-6718595172086965685" xil_pn:start_ts="1346402759">
       <status xil_pn:value="AbortedRun"/>
@@ -144,10 +145,12 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1346403344" xil_pn:in_ck="-5648158229109777827" xil_pn:name="TRANEXT_xstsynthesize_spartan6" xil_pn:prop_ck="4684677307114230627" xil_pn:start_ts="1346403322">
+    <transform xil_pn:end_ts="1346410768" xil_pn:in_ck="3218539799830628436" xil_pn:name="TRANEXT_xstsynthesize_spartan6" xil_pn:prop_ck="4684677307114230627" xil_pn:start_ts="1346410744">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
+      <status xil_pn:value="OutOfDateForOutputs"/>
+      <status xil_pn:value="OutputChanged"/>
       <outfile xil_pn:name="MT32_GEN.lso"/>
       <outfile xil_pn:name="MT32_GEN.ngc"/>
       <outfile xil_pn:name="MT32_GEN.ngr"/>
@@ -164,7 +167,7 @@
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
     </transform>
-    <transform xil_pn:end_ts="1346402404" xil_pn:in_ck="4022836285695519237" xil_pn:name="TRANEXT_ngdbuild_FPGA" xil_pn:prop_ck="-3239974068874808843" xil_pn:start_ts="1346402393">
+    <transform xil_pn:end_ts="1346410827" xil_pn:in_ck="4022836285695519237" xil_pn:name="TRANEXT_ngdbuild_FPGA" xil_pn:prop_ck="-3239974068874808843" xil_pn:start_ts="1346410817">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="MT32_GEN.bld"/>
@@ -173,7 +176,7 @@
       <outfile xil_pn:name="_ngo"/>
       <outfile xil_pn:name="_xmsgs/ngdbuild.xmsgs"/>
     </transform>
-    <transform xil_pn:end_ts="1346402481" xil_pn:in_ck="4022836285695519238" xil_pn:name="TRANEXT_map_spartan6" xil_pn:prop_ck="6094698697723550085" xil_pn:start_ts="1346402404">
+    <transform xil_pn:end_ts="1346410891" xil_pn:in_ck="4022836285695519238" xil_pn:name="TRANEXT_map_spartan6" xil_pn:prop_ck="6094698697723550085" xil_pn:start_ts="1346410827">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="WarningsGenerated"/>
       <status xil_pn:value="ReadyToRun"/>
@@ -187,7 +190,7 @@
       <outfile xil_pn:name="MT32_GEN_usage.xml"/>
       <outfile xil_pn:name="_xmsgs/map.xmsgs"/>
     </transform>
-    <transform xil_pn:end_ts="1346402550" xil_pn:in_ck="-4708548656413455329" xil_pn:name="TRANEXT_par_spartan6" xil_pn:prop_ck="832869163894192598" xil_pn:start_ts="1346402481">
+    <transform xil_pn:end_ts="1346410966" xil_pn:in_ck="-4708548656413455329" xil_pn:name="TRANEXT_par_spartan6" xil_pn:prop_ck="832869163894192598" xil_pn:start_ts="1346410891">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="MT32_GEN.ncd"/>
@@ -201,7 +204,7 @@
       <outfile xil_pn:name="MT32_GEN_par.xrpt"/>
       <outfile xil_pn:name="_xmsgs/par.xmsgs"/>
     </transform>
-    <transform xil_pn:end_ts="1346402550" xil_pn:in_ck="4022836285695519106" xil_pn:name="TRAN_postRouteTrce" xil_pn:prop_ck="445577401284416185" xil_pn:start_ts="1346402534">
+    <transform xil_pn:end_ts="1346410966" xil_pn:in_ck="4022836285695519106" xil_pn:name="TRAN_postRouteTrce" xil_pn:prop_ck="445577401284416185" xil_pn:start_ts="1346410950">
       <status xil_pn:value="SuccessfullyRun"/>
       <status xil_pn:value="ReadyToRun"/>
       <outfile xil_pn:name="MT32_GEN.twr"/>

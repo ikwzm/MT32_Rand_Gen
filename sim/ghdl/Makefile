@@ -14,13 +14,13 @@ test_bench: mt19937ar.o test_bench.o mt32_gen.o mt32_1w1r_ram.o sdpram.o sdpram_
 	 $(GHDL) -e $(GHDLFLAGS) $@
 	-$(GHDL) -r $(GHDLRUNFLAGS) $@
 
-test_bench.o   :  ../../src/test/test_bench.vhd Dummy_Plug
+test_bench.o   :  ../../src/test/vhdl/test_bench.vhd Dummy_Plug
 	$(GHDL) -a $(GHDLFLAGS) --work=work $<
 
-mt32_gen.o     :  ../../src/main/mt32_gen.vhd
+mt32_gen.o     :  ../../src/main/vhdl/mt32_gen.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=work $<
 
-mt32_1w1r_ram.o:  ../../src/main/mt32_1w1r_ram.vhd PipeWork
+mt32_1w1r_ram.o:  ../../src/main/vhdl/mt32_1w1r_ram.vhd PipeWork
 	$(GHDL) -a $(GHDLFLAGS) --work=work $<
 
 Dummy_Plug     : mt19937ar.o
