@@ -15,17 +15,17 @@
   <version xil_pn:ise_version="13.1" xil_pn:schema_version="2"/>
 
   <files>
-    <file xil_pn:name="../../../../PipeWork/src/main/vhdl/components/components.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="../../../../PipeWork/src/components/components.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="3"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="3"/>
       <library xil_pn:name="PipeWork"/>
     </file>
-    <file xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="../../../../PipeWork/src/components/sdpram.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="1"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="1"/>
       <library xil_pn:name="PipeWork"/>
     </file>
-    <file xil_pn:name="../../../../PipeWork/src/main/vhdl/components/sdpram_xilinx_auto_select.vhd" xil_pn:type="FILE_VHDL">
+    <file xil_pn:name="../../../../PipeWork/src/components/sdpram_xilinx_auto_select.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation" xil_pn:seqID="2"/>
       <association xil_pn:name="Implementation" xil_pn:seqID="2"/>
       <library xil_pn:name="PipeWork"/>

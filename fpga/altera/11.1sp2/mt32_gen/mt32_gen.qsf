@@ -44,9 +44,9 @@ set_global_assignment -name PROJECT_CREATION_TIME_DATE "18:01:32  AUGUST 31, 201
 set_global_assignment -name LAST_QUARTUS_VERSION "11.1 SP2"
 set_global_assignment -name VHDL_FILE ../../../../src/main/vhdl/mt32_gen.vhd
 set_global_assignment -name VHDL_FILE ../../../../src/main/vhdl/mt32_1w1r_ram.vhd
-set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/main/vhdl/components/sdpram_altera_auto_select.vhd -library PipeWork
-set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/main/vhdl/components/sdpram.vhd -library PipeWork
-set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/main/vhdl/components/components.vhd -library PipeWork
+set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/components/sdpram_altera_auto_select.vhd -library PipeWork
+set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/components/sdpram.vhd -library PipeWork
+set_global_assignment -name VHDL_FILE ../../../../PipeWork/src/components/components.vhd -library PipeWork
 set_global_assignment -name SEARCH_PATH work
 set_global_assignment -name SEARCH_PATH pipework
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top

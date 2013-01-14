@@ -30,11 +30,11 @@ mt19937ar.o    :  ../../Dummy_Plug/src/main/vhdl/core/mt19937ar.vhd
 
 PipeWork       : sdpram.o sdpram_model.o components.o
 
-components.o   :  ../../PipeWork/src/main/vhdl/components/components.vhd
+components.o   :  ../../PipeWork/src/components/components.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=PipeWork $<
 
-sdpram.o       :  ../../PipeWork/src/main/vhdl/components/sdpram.vhd
+sdpram.o       :  ../../PipeWork/src/components/sdpram.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=PipeWork $<
 
-sdpram_model.o :  ../../PipeWork/src/main/vhdl/components/sdpram_model.vhd
+sdpram_model.o :  ../../PipeWork/src/components/sdpram_model.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=PipeWork $<
