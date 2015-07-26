@@ -1,12 +1,12 @@
 -----------------------------------------------------------------------------------
 --!     @file    test_bench.vhd
 --!     @brief   Test Bench for MT32_GEN.
---!     @version 0.0.5
---!     @date    2012/8/31
+--!     @version 0.1.0
+--!     @date    2015/7/26
 --!     @author  Ichiro Kawazome <ichiro_k@ca2.so-net.ne.jp>
 -----------------------------------------------------------------------------------
 --
---      Copyright (C) 2012 Ichiro Kawazome
+--      Copyright (C) 2012-2015 Ichiro Kawazome
 --      All rights reserved.
 --
 --      Redistribution and use in source and binary forms, with or without
@@ -49,8 +49,7 @@ end     TEST_BENCH;
 architecture MODEL of TEST_BENCH is
     component  MT32_GEN
         generic (
-            N           : integer;
-            M           : integer;
+            SEED        : integer;
             L           : integer
         );
         port (
@@ -73,6 +72,7 @@ architecture MODEL of TEST_BENCH is
     constant  PERIOD      : time    := 10 ns;
     constant  DELAY       : time    :=  1 ns;
     constant  N           : integer := 624;
+    constant  INIT_SEED   : integer := 123;
     signal    CLK         : std_logic;
     signal    RST         : std_logic;
     signal    TBL_INIT    : std_logic;
@@ -87,8 +87,7 @@ architecture MODEL of TEST_BENCH is
 begin
     U: MT32_GEN
         generic map(
-            N           => N,
-            M           => 397,
+            SEED        => INIT_SEED,
             L           => LANE
         )
         port map(
@@ -162,7 +161,8 @@ begin
         ---------------------------------------------------------------------------
         -- Pseudo Random Number Generator Instance.
         ---------------------------------------------------------------------------
-        variable prng      : PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE := NEW_PSEUDO_RANDOM_NUMBER_GENERATOR(seed);
+        variable prng_1    : PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE := NEW_PSEUDO_RANDOM_NUMBER_GENERATOR(INIT_SEED);
+        variable prng_2    : PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE := NEW_PSEUDO_RANDOM_NUMBER_GENERATOR(seed);
         ---------------------------------------------------------------------------
         -- Random number 
         ---------------------------------------------------------------------------
@@ -183,12 +183,97 @@ begin
             end loop;
             wait for DELAY;
         end WAIT_CLK;
-        variable wdata     : std_logic_vector(WIDTH*LANE-1 downto 0);
-        variable rdata     : std_logic_vector(WIDTH     -1 downto 0);
-        variable count_run : integer;
-        variable count_val : integer;
-        variable count_max : integer;
         constant RUN_WAIT  : integer := 3;
+        ---------------------------------------------------------------------------
+        -- 
+        ---------------------------------------------------------------------------
+        procedure CHECK_TBL(prng: inout PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE) is
+            variable rdata : std_logic_vector(WIDTH     -1 downto 0);
+        begin
+            for i in 0 to N/LANE-1 loop
+                TBL_RPTR  <= std_logic_vector(to_unsigned(i*LANE,TBL_RPTR'length));
+                WAIT_CLK(2);
+                for l in 0 to LANE-1 loop
+                    rdata := TBL_RDATA(WIDTH*(l+1)-1 downto WIDTH*l);
+                    if (rdata /= std_logic_vector(prng.table(i*LANE+l))) then
+                        WRITE(text_line, SPACE & "TBL_RDATA(");
+                        WRITE(text_line, i*LANE+l);
+                        WRITE(text_line, ")=" & TO_DEC_STRING(unsigned(rdata),10) & " prng.table=(");
+                        WRITE(text_line, i*LANE+l);
+                        WRITE(text_line, ")=" & TO_DEC_STRING(unsigned(prng.table(i*LANE+l)),10));
+                        WRITELINE(OUTPUT, text_line);
+                        assert (FALSE) report "Mismatch Initialzed table" severity FAILURE;
+                    end if;
+                end loop;
+                -- WRITE(text_line, TO_DEC_STRING(unsigned(TBL_RPTR ), 6));
+                -- WRITE(text_line, SPACE);
+                -- WRITE(text_line, TO_DEC_STRING(unsigned(TBL_RDATA),10));
+                -- WRITELINE(OUTPUT, text_line);
+            end loop;
+        end procedure;
+        ---------------------------------------------------------------------------
+        -- 
+        ---------------------------------------------------------------------------
+        procedure WRITE_TBL(prng: inout PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE) is
+            variable wdata : std_logic_vector(WIDTH*LANE-1 downto 0);
+        begin
+            for i in 0 to N/LANE-1 loop
+                for l in 0 to LANE-1 loop
+                    wdata(WIDTH*(l+1)-1 downto WIDTH*l) := std_logic_vector(prng.table(i*LANE+l));
+                end loop;
+                TBL_WDATA <= wdata;
+                TBL_WPTR  <= std_logic_vector(to_unsigned(i*LANE,TBL_WPTR'length));
+                TBL_WE    <= (others => '1');
+                WAIT_CLK(1);
+            end loop;
+            TBL_WE    <= (others => '0');
+        end procedure;
+        ---------------------------------------------------------------------------
+        -- 
+        ---------------------------------------------------------------------------
+        procedure CHECK_RND(prng: inout PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE; count:integer) is
+            variable count_run : integer;
+            variable count_val : integer;
+            variable count_max : integer;
+            variable rdata     : std_logic_vector(WIDTH     -1 downto 0);
+        begin
+            RND_RUN   <= '1';
+            count_run := 0;
+            count_val := 0;
+            count_max := (count/LANE)-1;
+            for i in 0 to RUN_WAIT*(count_max+10) loop
+                wait until (CLK'event and CLK = '1');
+                if (count_run >= count_max or i mod RUN_WAIT /= 0) then
+                    RND_RUN <= '0' after DELAY;
+                else
+                    RND_RUN <= '1' after DELAY;
+                    count_run := count_run + 1;
+                end if;
+                if (RND_VAL = '1') then
+                    for l in 0 to LANE-1 loop
+                        count_val := count_val + 1;
+                        rdata := RND_NUM(32*(l+1)-1 downto 32*l);
+                        WRITE(text_line, TO_DEC_STRING(unsigned(rdata),10));
+                        WRITE(text_line, SPACE);
+                        GENERATE_RANDOM_STD_LOGIC_VECTOR(prng,vec);
+                        assert (rdata = vec)
+                            report "Mismatch Random Number (" &
+                                   TO_DEC_STRING(to_unsigned(count_val,10),4,'0') & ") " &
+                                   TO_DEC_STRING(unsigned(rdata),10) & " /= " &
+                                   TO_DEC_STRING(unsigned(  vec),10)
+                            severity FAILURE;
+                        if ((count_val*LANE+l) mod 5 = 0) then
+                            WRITELINE(OUTPUT, text_line);
+                        end if;
+                    end loop;
+                    if (count_val > count_max) then
+                        exit;
+                    end if;
+                end if;
+            end loop;
+            WRITELINE(OUTPUT, text_line);
+            RND_RUN  <= '0' after DELAY;
+        end procedure;
     begin
         RST       <= '1';
         TBL_INIT  <= '0';        
@@ -200,79 +285,34 @@ begin
         WAIT_CLK(10);
         RST       <= '0';
         WAIT_CLK(10);
-        TBL_INIT  <= '1';
-        for i in 0 to N/LANE-1 loop
-            for l in 0 to LANE-1 loop
-                wdata(WIDTH*(l+1)-1 downto WIDTH*l) := std_logic_vector(prng.table(i*LANE+l));
-            end loop;
-            TBL_WDATA <= wdata;
-            TBL_WPTR  <= std_logic_vector(to_unsigned(i*LANE,TBL_WPTR'length));
-            TBL_WE    <= (others => '1');
-            WAIT_CLK(1);
-        end loop;
-        TBL_WE    <= (others => '0');
+
+        WRITE(text_line, TAG & "check prgn_1.table");
+        WRITELINE(OUTPUT, text_line);
         WAIT_CLK(1);
-        for i in 0 to N/LANE-1 loop
-            TBL_RPTR  <= std_logic_vector(to_unsigned(i*LANE,TBL_RPTR'length));
-            WAIT_CLK(2);
-            for l in 0 to LANE-1 loop
-                rdata := TBL_RDATA(WIDTH*(l+1)-1 downto WIDTH*l);
-                if (rdata /= std_logic_vector(prng.table(i*LANE+l))) then
-                    WRITE(text_line, SPACE & "TBL_RDATA(");
-                    WRITE(text_line, i*LANE+l);
-                    WRITE(text_line, ")=" & TO_DEC_STRING(unsigned(rdata),10) & " prng.table=(");
-                    WRITE(text_line, i*LANE+l);
-                    WRITE(text_line, ")=" & TO_DEC_STRING(unsigned(prng.table(i*LANE+l)),10));
-                    WRITELINE(OUTPUT, text_line);
-                    assert (FALSE) report "Mismatch Initialzed table" severity FAILURE;
-                end if;
-            end loop;
-            -- WRITE(text_line, TO_DEC_STRING(unsigned(TBL_RPTR ), 6));
-            -- WRITE(text_line, SPACE);
-            -- WRITE(text_line, TO_DEC_STRING(unsigned(TBL_RDATA),10));
-            -- WRITELINE(OUTPUT, text_line);
-        end loop;
+        TBL_INIT <= '1';
+        CHECK_TBL(prng_1);
         WAIT_CLK(10);
         TBL_INIT <= '0';
 
         WRITE(text_line, TAG & "1000 outputs of genrand_int32()");
         WRITELINE(OUTPUT, text_line);
-        RND_RUN   <= '1';
-        count_run := 0;
-        count_val := 0;
-        count_max := (1000/LANE)-1;
-        for i in 0 to RUN_WAIT*(count_max+10) loop
-            wait until (CLK'event and CLK = '1');
-            if (count_run >= count_max or i mod RUN_WAIT /= 0) then
-                RND_RUN <= '0' after DELAY;
-            else
-                RND_RUN <= '1' after DELAY;
-                count_run := count_run + 1;
-            end if;
-            if (RND_VAL = '1') then
-                for l in 0 to LANE-1 loop
-                    count_val := count_val + 1;
-                    rdata := RND_NUM(32*(l+1)-1 downto 32*l);
-                    WRITE(text_line, TO_DEC_STRING(unsigned(rdata),10));
-                    WRITE(text_line, SPACE);
-                    GENERATE_RANDOM_STD_LOGIC_VECTOR(prng,vec);
-                    assert (rdata = vec)
-                        report "Mismatch Random Number (" &
-                               TO_DEC_STRING(to_unsigned(count_val,10),4,'0') & ") " &
-                               TO_DEC_STRING(unsigned(rdata),10) & " /= " &
-                               TO_DEC_STRING(unsigned(  vec),10)
-                        severity FAILURE;
-                    if ((count_val*LANE+l) mod 5 = 0) then
-                        WRITELINE(OUTPUT, text_line);
-                    end if;
-                end loop;
-                if (count_val > count_max) then
-                    exit;
-                end if;
-            end if;
-        end loop;
+        CHECK_RND(prng_1, 1000);
+
+        WRITE(text_line, TAG & "write prng_2.table");
         WRITELINE(OUTPUT, text_line);
-        RND_RUN  <= '0' after DELAY;
+        TBL_INIT  <= '1';
+        WAIT_CLK(1);
+        WRITE_TBL(prng_2);
+        WRITE(text_line, TAG & "check prng_2.table");
+        WRITELINE(OUTPUT, text_line);
+        WAIT_CLK(1);
+        CHECK_TBL(prng_2);
+        WAIT_CLK(10);
+        TBL_INIT <= '0';
+
+        WRITE(text_line, TAG & "1000 outputs of genrand_int32()");
+        WRITELINE(OUTPUT, text_line);
+        CHECK_RND(prng_2, 1000);
 
         assert(false) report TAG & " Run complete..." severity FAILURE;
         wait;

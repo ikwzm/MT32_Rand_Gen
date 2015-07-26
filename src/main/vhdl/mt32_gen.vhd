@@ -1,12 +1,12 @@
 -----------------------------------------------------------------------------------
 --!     @file    mt32_gen.vhd
 --!     @brief   Pseudo Random Number Generator (MT32)
---!     @version 0.0.5
---!     @date    2012/8/31
+--!     @version 0.1.0
+--!     @date    2015/6/26
 --!     @author  Ichiro Kawazome <ichiro_k@ca2.so-net.ne.jp>
 -----------------------------------------------------------------------------------
 --
---      Copyright (C) 2012 Ichiro Kawazome
+--      Copyright (C) 2012-2015 Ichiro Kawazome
 --      All rights reserved.
 --
 --      Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,7 @@ library ieee;
 use     ieee.std_logic_1164.all;
 entity  MT32_GEN is
     generic (
-        N           : integer := 624;
-        M           : integer := 397;
+        SEED        : integer := 123;
         L           : integer := 1
     );
     port (
@@ -63,6 +62,11 @@ library ieee;
 use     ieee.std_logic_1164.all;
 use     ieee.numeric_std.all;
 architecture RTL of MT32_GEN is
+    -------------------------------------------------------------------------------
+    -- 
+    -------------------------------------------------------------------------------
+    constant  N                : integer := 624;
+    constant  M                : integer := 397;
     -------------------------------------------------------------------------------
     -- 
     -------------------------------------------------------------------------------
@@ -189,6 +193,9 @@ architecture RTL of MT32_GEN is
     component MT32_1W1R_RAM
         generic(
             DEPTH : integer;
+            L_SIZE: integer;
+            L_NUM : integer;
+            SEED  : integer;
             ID    : integer
         );
         port (
@@ -277,6 +284,9 @@ begin
             U:MT32_1W1R_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
+                    L_SIZE=> L,
+                    L_NUM => i,
+                    SEED  => SEED,
                     ID    => i
                 )
                 port map (
@@ -306,6 +316,9 @@ begin
             U: MT32_1W1R_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
+                    L_SIZE=> L,
+                    L_NUM => i,
+                    SEED  => SEED,
                     ID    => i
                 )
                 port map (
@@ -330,6 +343,9 @@ begin
             U: MT32_1W1R_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
+                    L_SIZE=> L,
+                    L_NUM => i,
+                    SEED  => SEED,
                     ID    => L+i
                 )
                 port map (
