@@ -38,35 +38,15 @@ library ieee;
 use     ieee.std_logic_1164.all;
 use     ieee.numeric_std.all;
 use     std.textio.all;
-library Dummy_Plug;
-use     Dummy_Plug.MT19937AR.SEED_VECTOR;
-use     Dummy_Plug.MT19937AR.PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
-use     Dummy_Plug.MT19937AR.NEW_PSEUDO_RANDOM_NUMBER_GENERATOR;
-use     Dummy_Plug.MT19937AR.GENERATE_RANDOM_STD_LOGIC_VECTOR;
-use     Dummy_Plug.MT19937AR.GENERATE_RANDOM_REAL2;
+library MT32_RAND_GEN;
+use     MT32_RAND_GEN.MT19937AR.SEED_VECTOR;
+use     MT32_RAND_GEN.MT19937AR.PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
+use     MT32_RAND_GEN.MT19937AR.NEW_PSEUDO_RANDOM_NUMBER_GENERATOR;
+use     MT32_RAND_GEN.MT19937AR.GENERATE_RANDOM_STD_LOGIC_VECTOR;
+use     MT32_RAND_GEN.MT19937AR.GENERATE_RANDOM_REAL2;
 entity  TEST_BENCH is
 end     TEST_BENCH;
 architecture MODEL of TEST_BENCH is
-    component  MT32_GEN
-        generic (
-            SEED        : integer;
-            L           : integer
-        );
-        port (
-            CLK         : in  std_logic;
-            RST         : in  std_logic;
-            TBL_INIT    : in  std_logic;
-            TBL_WE      : in  std_logic_vector(   L-1 downto 0);
-            TBL_WPTR    : in  std_logic_vector(    15 downto 0);
-            TBL_WDATA   : in  std_logic_vector(32*L-1 downto 0);
-            TBL_RPTR    : in  std_logic_vector(    15 downto 0);
-            TBL_RDATA   : out std_logic_vector(32*L-1 downto 0);
-            RND_RUN     : in  std_logic;
-            RND_VAL     : out std_logic;
-            RND_NUM     : out std_logic_vector(32*L-1 downto 0)
-        );
-    end component;
-
     constant  WIDTH       : integer := 32;
     constant  LANE        : integer := 1;
     constant  PERIOD      : time    := 10 ns;
@@ -85,7 +65,7 @@ architecture MODEL of TEST_BENCH is
     signal    RND_VAL     : std_logic;
     signal    RND_NUM     : std_logic_vector(WIDTH*LANE-1 downto 0);
 begin
-    U: MT32_GEN
+    U: entity MT32_RAND_GEN.MT32_RAND_GEN
         generic map(
             SEED        => INIT_SEED,
             L           => LANE

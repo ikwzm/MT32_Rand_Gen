@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
---!     @file    mt32_1w1r_ram.vhd
+--!     @file    mt32_rand_ram.vhd
 --!     @brief   Synchronous Dual Port RAM for MT32_GEN
 --!     @version 0.1.0
 --!     @date    2015/7/26
@@ -36,7 +36,7 @@
 -----------------------------------------------------------------------------------
 library ieee;
 use     ieee.std_logic_1164.all;
-entity  MT32_1W1R_RAM is
+entity  MT32_RAND_RAM is
     generic (
         DEPTH : integer := 6;
         L_SIZE: integer := 1;
@@ -52,14 +52,14 @@ entity  MT32_1W1R_RAM is
         WDATA : in  std_logic_vector(     31 downto 0);
         RDATA : out std_logic_vector(     31 downto 0)
     );
-end     MT32_1W1R_RAM;
+end     MT32_RAND_RAM;
 library ieee;
 use     ieee.std_logic_1164.all;
 use     ieee.numeric_std.all;
-library Dummy_Plug;
-use     Dummy_Plug.MT19937AR.PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
-use     Dummy_Plug.MT19937AR.NEW_PSEUDO_RANDOM_NUMBER_GENERATOR;
-architecture RTL of MT32_1W1R_RAM is
+library MT32_RAND_GEN;
+use     MT32_RAND_GEN.MT19937AR.PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
+use     MT32_RAND_GEN.MT19937AR.NEW_PSEUDO_RANDOM_NUMBER_GENERATOR;
+architecture RTL of MT32_RAND_RAM is
     type     RAM_TYPE is array(integer range <>) of std_logic_vector(31 downto 0);
 
     function RAM_INIT return RAM_TYPE is

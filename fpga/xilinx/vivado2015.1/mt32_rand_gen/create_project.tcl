@@ -3,7 +3,7 @@
 #
 
 set project_directory       [file dirname [info script]]
-set project_name            "mt32_gen"
+set project_name            "mt32_rand_gen"
 set device_parts            "xc7a15tcsg324-3"
 #
 # Create project
@@ -61,40 +61,41 @@ current_run -implementation [get_runs impl_1]
 #
 set obj [get_filesets sources_1]
 set files [list \
- "[file normalize "$project_directory/../../../../Dummy_Plug/src/main/vhdl/core/mt19937ar.vhd"]"\
- "[file normalize "$project_directory/../../../../src/main/vhdl/mt32_1w1r_ram.vhd"]"\
- "[file normalize "$project_directory/../../../../src/main/vhdl/mt32_gen.vhd"]"\
+ "[file normalize "$project_directory/../../../../src/main/vhdl/mt19937ar.vhd"]"\
+ "[file normalize "$project_directory/../../../../src/main/vhdl/mt32_rand_ram.vhd"]"\
+ "[file normalize "$project_directory/../../../../src/main/vhdl/mt32_rand_gen.vhd"]"\
 ]
 add_files -norecurse -fileset $obj $files
 #
 # Set 'sources_1' fileset file properties for remote files
 #
-set file "$project_directory/../../../../Dummy_Plug/src/main/vhdl/core/mt19937ar.vhd"
+set file "$project_directory/../../../../src/main/vhdl/mt19937ar.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property "file_type" "VHDL"       $file_obj
-set_property "library"   "Dummy_Plug" $file_obj
+set_property "file_type" "VHDL"          $file_obj
+set_property "library"   "MT32_RAND_GEN" $file_obj
 
-set file "$project_directory/../../../../src/main/vhdl/mt32_1w1r_ram.vhd"
+set file "$project_directory/../../../../src/main/vhdl/mt32_rand_ram.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property "file_type" "VHDL"       $file_obj
+set_property "file_type" "VHDL"          $file_obj
+set_property "library"   "MT32_RAND_GEN" $file_obj
 
-set file "$project_directory/../../../../src/main/vhdl/mt32_gen.vhd"
+set file "$project_directory/../../../../src/main/vhdl/mt32_rand_gen.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property "file_type" "VHDL"       $file_obj
+set_property "file_type" "VHDL"          $file_obj
+set_property "library"   "MT32_RAND_GEN" $file_obj
 #
 # Set 'sources_1' fileset properties
 #
 set obj [get_filesets sources_1]
-set_property "top" "MT32_GEN" $obj
+set_property "top" "MT32_RAND_GEN" $obj
 #
 # Set 'sim_1' fileset file properties for remote files
 #
 set obj [get_filesets sim_1]
 set files [list \
- "[file normalize "$project_directory/../../../../Dummy_Plug/src/main/vhdl/core/mt19937ar.vhd"]"\
  "[file normalize "$project_directory/../../../../src/test/vhdl/test_bench.vhd"]"\
 ]
 add_files -norecurse -fileset $obj $files
@@ -110,5 +111,3 @@ set_property "file_type" "VHDL"       $file_obj
 #
 set obj [get_filesets sim_1]
 set_property "top" "TEST_BENCH"  $obj
-set_property "xelab.nosort"  "1" $obj
-set_property "xelab.unifast" ""  $obj

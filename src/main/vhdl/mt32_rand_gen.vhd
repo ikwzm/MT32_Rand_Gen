@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
---!     @file    mt32_gen.vhd
+--!     @file    mt32_rand_gen.vhd
 --!     @brief   Pseudo Random Number Generator (MT32)
 --!     @version 0.1.0
 --!     @date    2015/6/26
@@ -36,7 +36,7 @@
 -----------------------------------------------------------------------------------
 library ieee;
 use     ieee.std_logic_1164.all;
-entity  MT32_GEN is
+entity  MT32_RAND_GEN is
     generic (
         SEED        : integer := 123;
         L           : integer := 1
@@ -54,14 +54,14 @@ entity  MT32_GEN is
         RND_VAL     : out std_logic;
         RND_NUM     : out std_logic_vector(32*L-1 downto 0)
     );
-end     MT32_GEN;
+end     MT32_RAND_GEN;
 -----------------------------------------------------------------------------------
 --
 -----------------------------------------------------------------------------------
 library ieee;
 use     ieee.std_logic_1164.all;
 use     ieee.numeric_std.all;
-architecture RTL of MT32_GEN is
+architecture RTL of MT32_RAND_GEN is
     -------------------------------------------------------------------------------
     -- 
     -------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ architecture RTL of MT32_GEN is
     -------------------------------------------------------------------------------
     -- 
     -------------------------------------------------------------------------------
-    component MT32_1W1R_RAM
+    component MT32_RAND_RAM
         generic(
             DEPTH : integer;
             L_SIZE: integer;
@@ -281,7 +281,7 @@ begin
         MT_Y_U:if (i = 0) generate
           signal mt_curr_upper : std_logic_vector(UPPER'range);
         begin 
-            U:MT32_1W1R_RAM
+            U:MT32_RAND_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
                     L_SIZE=> L,
@@ -313,7 +313,7 @@ begin
         -- 
         ---------------------------------------------------------------------------
         MT_Y_M: if (i > 0) generate
-            U: MT32_1W1R_RAM
+            U: MT32_RAND_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
                     L_SIZE=> L,
@@ -340,7 +340,7 @@ begin
         begin
             mt_xaddr <= mt_curr_xaddr when (i >= (M mod L)) else
                            mt_next_xaddr;
-            U: MT32_1W1R_RAM
+            U: MT32_RAND_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
                     L_SIZE=> L,
