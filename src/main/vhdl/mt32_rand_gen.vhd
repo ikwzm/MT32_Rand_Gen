@@ -186,7 +186,6 @@ architecture RTL of MT32_RAND_GEN is
     signal    x_curr_index         : MT_PTR_TYPE;
     signal    x_next_index         : MT_PTR_TYPE;
     signal    z_curr_index         : MT_PTR_TYPE;
-    signal    run                  : std_logic;
     -------------------------------------------------------------------------------
     -- 
     -------------------------------------------------------------------------------
@@ -218,7 +217,6 @@ begin
                 x_curr_index <= TO_MT_PTR(M);
                 x_next_index <= TO_MT_PTR(M);
                 z_curr_index <= TO_MT_PTR(0);
-                run          <= '0';
                 mt_read      <= '0';
                 z_val        <= '0';
         elsif (CLK'event and CLK = '1') then
@@ -228,16 +226,10 @@ begin
                 x_curr_index <= TO_MT_PTR(M);
                 x_next_index <= TO_MT_PTR(M);
                 z_curr_index <= TO_MT_PTR(0);
-                run          <= '0';
                 mt_read      <= '0';
                 z_val        <= '0';
             else
-                if (RND_RUN = '1') then
-                    run <= '1';
-                else
-                    run <= '0';
-                end if;
-                if (run = '1')then
+                if (RND_RUN = '1')then
                     y_curr_index <= y_next_index;
                     y_next_index <= INC_MT_PTR(y_next_index);
                     x_curr_index <= x_next_index;
