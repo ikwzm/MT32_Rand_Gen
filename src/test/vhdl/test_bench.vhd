@@ -48,7 +48,7 @@ entity  TEST_BENCH is
 end     TEST_BENCH;
 architecture MODEL of TEST_BENCH is
     constant  WIDTH       : integer := 32;
-    constant  LANE        : integer := 1;
+    constant  LANE        : integer :=  1;
     constant  PERIOD      : time    := 10 ns;
     constant  DELAY       : time    :=  1 ns;
     constant  N           : integer := 624;
@@ -64,6 +64,7 @@ architecture MODEL of TEST_BENCH is
     signal    RND_RUN     : std_logic;
     signal    RND_VAL     : std_logic;
     signal    RND_NUM     : std_logic_vector(WIDTH*LANE-1 downto 0);
+    constant  RUN_WAIT    : integer := 1;
 begin
     U: entity MT32_RAND_GEN.MT32_RAND_GEN
         generic map(
@@ -163,7 +164,6 @@ begin
             end loop;
             wait for DELAY;
         end WAIT_CLK;
-        constant RUN_WAIT  : integer := 3;
         ---------------------------------------------------------------------------
         -- 
         ---------------------------------------------------------------------------
@@ -220,7 +220,7 @@ begin
             RND_RUN   <= '1';
             count_run := 0;
             count_val := 0;
-            count_max := (count/LANE)-1;
+            count_max := (count/LANE)*LANE-1;
             for i in 0 to RUN_WAIT*(count_max+10) loop
                 wait until (CLK'event and CLK = '1');
                 if (count_run >= count_max or i mod RUN_WAIT /= 0) then
@@ -242,7 +242,7 @@ begin
                                    TO_DEC_STRING(unsigned(rdata),10) & " /= " &
                                    TO_DEC_STRING(unsigned(  vec),10)
                             severity FAILURE;
-                        if ((count_val*LANE+l) mod 5 = 0) then
+                        if (count_val mod 5 = 0) then
                             WRITELINE(OUTPUT, text_line);
                         end if;
                     end loop;
