@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------
---!     @file    mt32_rand_ram.vhd
+--!     @file    mt32_rand_ram_auto.vhd
 --!     @brief   Synchronous Dual Port RAM for MT32_GEN
 --!     @version 0.1.0
 --!     @date    2015/7/26
@@ -36,20 +36,35 @@
 -----------------------------------------------------------------------------------
 library ieee;
 use     ieee.std_logic_1164.all;
-entity  MT32_RAND_RAM is
-    generic (
-        DEPTH : integer := 6;
-        L_SIZE: integer := 1;
-        L_NUM : integer := 0;
-        SEED  : integer := 123;
-        ID    : integer := 0 
-    );
-    port (
-        CLK   : in  std_logic;
-        WE    : in  std_logic;
-        WADDR : in  std_logic_vector(DEPTH-1 downto 0);
-        RADDR : in  std_logic_vector(DEPTH-1 downto 0);
-        WDATA : in  std_logic_vector(     31 downto 0);
-        RDATA : out std_logic_vector(     31 downto 0)
-    );
-end     MT32_RAND_RAM;
+use     ieee.numeric_std.all;
+library MT32_RAND_GEN;
+use     MT32_RAND_GEN.MT19937AR.PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
+use     MT32_RAND_GEN.MT19937AR.NEW_PSEUDO_RANDOM_NUMBER_GENERATOR;
+architecture AUTO of MT32_RAND_RAM is
+    type     RAM_TYPE is array(integer range <>) of std_logic_vector(31 downto 0);
+
+    function RAM_INIT return RAM_TYPE is
+        variable prng :  PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE := NEW_PSEUDO_RANDOM_NUMBER_GENERATOR(SEED);
+        variable ram  :  RAM_TYPE(0 to 2**DEPTH-1);
+    begin
+        for i in ram'range loop
+            if (i*L_SIZE+L_NUM <= prng.table'high) then
+                ram(i) := std_logic_vector(prng.table(i*L_SIZE+L_NUM));
+            else
+                ram(i) := (others => '0');
+            end if;
+        end loop;
+        return ram;
+    end function;
+
+    signal   ram      :  RAM_TYPE(0 to 2**DEPTH-1) := RAM_INIT;
+begin
+    process (CLK) begin
+        if (CLK'event and CLK = '1') then
+            if (WE = '1') then
+                ram(to_integer(unsigned(WADDR))) <= WDATA;
+            end if;
+            RDATA <= ram(to_integer(unsigned(RADDR)));
+        end if;
+    end process;
+end AUTO;

@@ -62,8 +62,9 @@ current_run -implementation [get_runs impl_1]
 set obj [get_filesets sources_1]
 set files [list \
  "[file normalize "$project_directory/../../src/main/vhdl/mt19937ar.vhd"]"\
- "[file normalize "$project_directory/../../src/main/vhdl/mt32_rand_ram.vhd"]"\
  "[file normalize "$project_directory/../../src/main/vhdl/mt32_rand_gen.vhd"]"\
+ "[file normalize "$project_directory/../../src/main/vhdl/mt32_rand_ram.vhd"]"\
+ "[file normalize "$project_directory/../../src/main/vhdl/mt32_rand_ram_auto.vhd"]"\
 ]
 add_files -norecurse -fileset $obj $files
 #
@@ -75,13 +76,19 @@ set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property "file_type" "VHDL"          $file_obj
 set_property "library"   "MT32_RAND_GEN" $file_obj
 
+set file "$project_directory/../../src/main/vhdl/mt32_rand_gen.vhd"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property "file_type" "VHDL"          $file_obj
+set_property "library"   "MT32_RAND_GEN" $file_obj
+
 set file "$project_directory/../../src/main/vhdl/mt32_rand_ram.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property "file_type" "VHDL"          $file_obj
 set_property "library"   "MT32_RAND_GEN" $file_obj
 
-set file "$project_directory/../../src/main/vhdl/mt32_rand_gen.vhd"
+set file "$project_directory/../../src/main/vhdl/mt32_rand_ram_auto.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property "file_type" "VHDL"          $file_obj
