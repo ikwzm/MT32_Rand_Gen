@@ -30,9 +30,9 @@ mt19937arを元にしています。
 * 状態テーブルを変更することが可能です。
 
 
-![Fig.1 外観](./readme.img/akgeo1.jpg "Fig.1 外観")
+![Fig.1 Top-Level Signaling Interface](./readme.img/akgeo1.jpg "Fig.1 Top-Level Signaling Interface")
 
-Fig.1 外観
+Fig.1 Top-Level Signaling Interface
 
 <br />
 
@@ -60,7 +60,7 @@ Table.1 Parameter Descriptions
     <td align="center">Description</td>
   </tr>
   <tr>
-    <td>LANE</td>
+    <td>L</td>
     <td align="center">Integer</td>
     <td align="center">1</td>
     <td>1クロックで生成する乱数の数を指定します。<br />このパラメータで指定できる数は、1、2、4、8、16のいずれかです。</td>
@@ -108,33 +108,33 @@ Table.2 Port  Descriptions
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">in</td>
-    <td>乱数生成開始信号<br />この信号が\'1\'になってから３クロック後に乱数を出力します<br />TBL_INITが\'1\'の時、この信号を\'1\'にしてはいけません</td>
+    <td>乱数生成開始信号<br />この信号が'1'になってから３クロック後に乱数を出力します<br />TBL_INITが'1'の時、この信号を'1'にしてはいけません</td>
   </tr>
   <tr>
     <td>RND_VAL</td>
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">out</td>
-    <td>乱数有効信号<br />RND_NUMより生成された乱数が有効であることをしめす信号<br />RND_RUNが\'1\'になってから3クロック後に\'1\'になります</td>
+    <td>乱数有効信号<br />RND_NUMより生成された乱数が有効であることをしめす信号<br />RND_RUNが'1'になってから3クロック後に'1'になります</td>
   </tr>
   <tr>
     <td>RND_NUM</td>
     <td align="center">STD_LOGIC_VECTOR</td>
-    <td align="center">32*LANE</td>
+    <td align="center">32*L</td>
     <td align="center">out</td>
-    <td>乱数出力信号<br />生成された乱数を出力する信号<br />RND_RUNが\'1\'になってから３クロック後に乱数を出力します</td>
+    <td>乱数出力信号<br />生成された乱数を出力する信号<br />RND_RUNが'1'になってから３クロック後に乱数を出力します</td>
   </tr>
   <tr>
     <td>TBL_INIT</td>
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">in</td>
-    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が\'1\'の時のみ、TBL_*信号は有効です</td>
+    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が'1'の時のみ、TBL_*信号は有効です</td>
   </tr>
   <tr>
     <td>TBL_WE</td>
     <td align="center">STD_LOGIC_VECTOR</td>
-    <td align="center">1*LANE</td>
+    <td align="center">1*L</td>
     <td align="center">in</td>
     <td>状態テーブル・ライト信号<br />状態テーブルへのライトを示す信号<br />ライトはワード(32bit)単位で行います</td>
   </tr>
@@ -148,7 +148,7 @@ Table.2 Port  Descriptions
   <tr>
     <td>TBL_WDATA</td>
     <td align="center">STD_LOGIC_VECTOR</td>
-    <td align="center">32*LANE</td>
+    <td align="center">32*L</td>
     <td align="center">in</td>
     <td>状態テーブル・ライトデータ<br />状態テーブルへのライトデータをLSBで入力します</td>
   </tr>
@@ -162,7 +162,7 @@ Table.2 Port  Descriptions
   <tr>
     <td>TBL_RDATA</td>
     <td align="center">STD_LOGIC_VECTOR</td>
-    <td align="center">32*LANE</td>
+    <td align="center">32*L</td>
     <td align="center">out</td>
     <td>状態テーブル・リードデータ<br />状態テーブルからのリードデータ<br />TBL_RPTRの入力に対して１クロック後にTBL_RPTRで示したアドレスの値を出力します</td>
   </tr>
@@ -171,18 +171,230 @@ Table.2 Port  Descriptions
 
 
 
-![Fig.2 Generate Timing (LANE=1)](./readme.img/akgeo2.jpg "Fig.2 Generate Timing (LANE=1)")
+![Fig.2 Generate Timing (L=1)](./readme.img/akgeo2.jpg "Fig.2 Generate Timing (L=1)")
 
-Fig.2 Generate Timing (LANE=1)
+Fig.2 Generate Timing (L=1)
+
+<br />
+
+
+![Fig.3 Generate Timing (L=4)](./readme.img/akgeo3.jpg "Fig.3 Generate Timing (L=4)")
+
+Fig.3 Generate Timing (L=4)
 
 <br />
 
 
-![Fig.3 Generate Timing (LANE=4)](./readme.img/akgeo3.jpg "Fig.3 Generate Timing (LANE=4)")
 
-Fig.3 Generate Timing (LANE=4)
+
+
+##Architecture
+
+
+###Block Diagram
+
+
+下図はL=1の時のブロック図です。
+
+
+![Fig.4 Block Diagram(L=1)](./readme.img/akgeo4.jpg "Fig.4 Block Diagram(L=1)")
+
+Fig.4 Block Diagram(L=1)
 
 <br />
+
+
+###RAMの構成(L=1)
+
+
+MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。ところがMersenne Twisterのアルゴリズムでは、１つの乱数を生成するためには次のように状態テーブル(mt)のi、(i+1) mod  N、(i+M) mod Nの位置の値が必要です。
+
+
+```VHDL:mt19937ar.vhd
+ procedure generate_word(
+        variable generator  : inout PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
+        variable result     : out   RANDOM_NUMBER_TYPE
+    ) is
+        alias    mt         :       RANDOM_NUMBER_VECTOR(0 to generator.table'length-1) is generator.table;
+        variable i          :       integer range mt'low to mt'high;
+        variable x0,x1,xm   :       RANDOM_NUMBER_TYPE;
+        variable y          :       RANDOM_NUMBER_TYPE;
+        variable z          :       RANDOM_NUMBER_TYPE;
+        constant mag01      :       RANDOM_NUMBER_VECTOR(0 to 1) := (0 => X"00000000", 1 => MATRIX_A);
+    begin
+        i  := generator.index;
+        x0 := mt(i);
+        x1 := mt((i+1) mod mt'length);
+        xm := mt((i+M) mod mt'length);
+        y  := (x0 and UPPER_MASK) or (x1 and LOWER_MASK);
+        z  := xm xor (y srl 1) xor mag01(to_integer(y mod mag01'length));
+        mt(i) := z;
+        generator.index := (i+1) mod mt'length;
+        y  := z;
+        y  := y xor ((y srl 11));
+        y  := y xor ((y sll  7) and X"9d2c5680");
+        y  := y xor ((y sll 15) and X"efc60000");
+        y  := y xor ((y srl 18));
+        result := y;
+    end procedure;
+```
+
+
+1クロックで乱数を生成するには、状態テーブルから３つのアドレスのデータを同時に読み出す必要があります。通常ならライト１ポート、リード３ポートのRAMが必要ですが、基本的にiはインクリメントされるため、一つ前の乱数生成時に使用したMT[i+1]をレジスタに保存しておき、次の乱数生成時にMT[i]として使用すれば、ライト１ポート、リード２ポートのRAMで実装することが出来ます。MT32_Rand_Genでは、ライト１ポート、リード１ポートのRAMはライト１ポート、リード１ポートのRAMを二つ並べることで実装しています。
+
+
+
+
+
+
+![Fig.5 RAM Read and Twist Timing Chart (L=1)](./readme.img/akgeo5.jpg "Fig.5 RAM Read and Twist Timing Chart (L=1)")
+
+Fig.5 RAM Read and Twist Timing Chart (L=1)
+
+<br />
+
+
+
+####RAMの構成(L>1)
+
+
+MT32_Rand_GenではLに２、４、８、１６を指定することで、１クロックでそれぞれ2ワード、４ワード、８ワード、１６ワードの乱数を同時に生成することが出来ます。
+
+そのためには、例えばL=4の場合、MT[i]、MT[(i+1) mod N]、MT[(i+2) mod N]、MT[(i+3) mod N]、MT[(i+4) mod N]、MT[(i+0+M) mod N]、MT[(i+1+M) mod N]、MT[(i+2+M) mod N]、MT[(i+3+M) mod N]の9つの状態テーブルの値を同時に読む必要があります。
+
+下図にMT[i]、MT[(i+1) mod N]、MT[(i+2) mod N]、MT[(i+3) mod N]、MT[(i+4) mod N]のRAM周りのブロック図を示します。
+
+
+![Fig.6 Block Diagram(L=4)-1](./readme.img/akgeo6.jpg "Fig.6 Block Diagram(L=4)-1")
+
+Fig.6 Block Diagram(L=4)-1
+
+<br />
+
+また、下図にMT[(i+0+M) mod N]、MT[(i+1+M) mod N]、MT[(i+2+M) mod N]、MT[(i+3+M) mod N]のRAM周りのブロック図を示します。
+
+
+![Fig.7 Block Diagram(L=4)-2](./readme.img/akgeo7.jpg "Fig.7 Block Diagram(L=4)-2")
+
+Fig.7 Block Diagram(L=4)-2
+
+<br />
+
+注意点は、MT32_Rand_Gen ではM=397なので、例えばMT[i+0+M]はZ[i+1]を書き込んだRAMに格納されていることです。そのため、各RAMの出力は1だけローテーションして各Twistのxmに接続する必要があります。
+
+
+####RAMのアドレス
+
+
+RAMのアドレスのタイプは次のように定義しています。
+
+
+```VHDL:mt32_rand_gen.vhd
+    function  CALC_MT_PTR_LOW return integer is
+        variable retval : integer;
+    begin
+        retval := 0;
+        while (2**retval < L) loop
+            retval := retval + 1;
+        end loop;
+        return retval;
+    end function;
+    function  CALC_MT_PTR_HIGH return integer is
+        variable retval : integer;
+    begin
+        retval := 0;
+        while (2**retval <= N) loop
+            retval := retval + 1;
+        end loop;
+        return retval;
+    end function;
+    constant  MT_PTR_LOW           : integer := CALC_MT_PTR_LOW;
+    constant  MT_PTR_HIGH          : integer := CALC_MT_PTR_HIGH;
+    subtype   MT_PTR_TYPE         is std_logic_vector(MT_PTR_HIGH downto MT_PTR_LOW);
+```
+
+
+
+
+また i mod Nなどいちいち剰余を計算するのは面倒なので、i は常にインクリメントされることを利用して、次のようにしています。
+
+
+```VHDL:mt32_rand_gen.vhd
+    function  TO_MT_PTR(arg:integer) return MT_PTR_TYPE is
+        variable u : unsigned(MT_PTR_HIGH downto 0);
+    begin
+        u := to_unsigned(arg,u'length);
+        return std_logic_vector(u(MT_PTR_TYPE'range));
+    end function;
+    function  INC_MT_PTR(ptr:MT_PTR_TYPE) return MT_PTR_TYPE is
+        variable retval : MT_PTR_TYPE;
+    begin
+        if (unsigned(ptr) >= unsigned(TO_MT_PTR(N-1))) then
+            retval := (others => '0');
+        else
+            retval := std_logic_vector(unsigned(ptr)+1);
+        end if;
+        return retval;
+    end function;
+```
+
+
+
+
+さらに次のように各RAMへのアドレスを生成しています。
+
+ここで各信号の意味は次の通り。
+
+  * x_curr_index = ((i) mod N)/L
+
+  * x_next_index = ((i+L) mod N)/L
+
+  * m_curr_index = ((i+M) mod N)/L
+
+  * m_next_index = ((i+L+M) mod N)/L
+
+
+```VHDL:mt32_rand_gen.vhd
+ CTRL: process(CLK,RST) begin
+        if (RST = '1') then
+                x_curr_index <= TO_MT_PTR(0);
+                x_next_index <= TO_MT_PTR(0);
+                m_curr_index <= TO_MT_PTR(M);
+                m_next_index <= TO_MT_PTR(M);
+                z_curr_index <= TO_MT_PTR(0);
+                mt_read      <= '0';
+                z_val        <= '0';
+        elsif (CLK'event and CLK = '1') then
+            if    (TBL_INIT='1') then
+                x_curr_index <= TO_MT_PTR(0);
+                x_next_index <= TO_MT_PTR(0);
+                m_curr_index <= TO_MT_PTR(M);
+                m_next_index <= TO_MT_PTR(M);
+                z_curr_index <= TO_MT_PTR(0);
+                mt_read      <= '0';
+                z_val        <= '0';
+            else
+                if (RND_RUN = '1')then
+                    x_curr_index <= x_next_index;
+                    x_next_index <= INC_MT_PTR(x_next_index);
+                    m_curr_index <= m_next_index;
+                    m_next_index <= INC_MT_PTR(m_next_index);
+                    mt_read      <= '1';
+                else
+                    mt_read      <= '0';
+                end if;
+                if (mt_read = '1') then
+                    z_curr_index <= x_curr_index;
+                    z_val        <= '1';
+                else
+                    z_val        <= '0';
+                end if;
+            end if;
+        end if;
+    end process;
+```
+
+
 
 
 
@@ -281,11 +493,20 @@ Vivado 2015.1
 
 すでにプロジェクトを作っている場合は省略してください。
 
-プロジェクトを生成するためのTclスクリプト(create_project.tcl)を用意しています。
+プロジェクトを生成するためのTclスクリプトを用意しています。
 
-cd fpga/xilinx/vivado2015.1/mt32_rand_gen
 
-Vivado > Tools > Run Tcl Script > create_project.tcl   
+
+fpga/xilinx/vivado2015.1/mt32_rand_gen/create_project.tcl
+
+
+
+上記のTclスクリプトをVivado で実行するとプロジェクトが作成されます。
+
+
+
+Vivado > Tools > Run Tcl Script > create_project.tcl
+
 
 
 
@@ -316,15 +537,25 @@ Vivado 2015.1
 
 すでにプロジェクトを作っている場合は省略してください。
 
-プロジェクトを生成するためのTclスクリプト(create_project.tcl)を用意しています。
+プロジェクトを生成するためのTclスクリプトを用意しています。
+
+
+
+fpga/xilinx/vivado2015.1/mt32_rand_gen/create_project.tcl
+
+
+
+上記のTclスクリプトをVivado で実行するとプロジェクトが作成されます。
+
+
+
+Vivado > Tools > Run Tcl Script > create_project.tcl
+
+
 
 デバイスはとりあえずxc7a15tcsg324-3を指定しますが、変更したい場合は、create_project.tcl を修正してください。
 
 
-
-cd fpga/xilinx/vivado2015.1/mt32_rand_gen
-
-Vivado > Tools > Run Tcl Script > create_project.tcl
 
 
 ####Synthesis
