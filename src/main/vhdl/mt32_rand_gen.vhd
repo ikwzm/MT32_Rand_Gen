@@ -44,11 +44,11 @@ entity  MT32_RAND_GEN is
     port (
         CLK         : in  std_logic;
         RST         : in  std_logic;
-        TBL_INIT    : in  std_logic;
-        TBL_WE      : in  std_logic_vector(   L-1 downto 0);
-        TBL_WPTR    : in  std_logic_vector(    15 downto 0);
-        TBL_WDATA   : in  std_logic_vector(32*L-1 downto 0);
-        TBL_RPTR    : in  std_logic_vector(    15 downto 0);
+        TBL_INIT    : in  std_logic := '0';
+        TBL_WE      : in  std_logic_vector(   L-1 downto 0) := (others => '0');
+        TBL_WPTR    : in  std_logic_vector(    15 downto 0) := (others => '0');
+        TBL_WDATA   : in  std_logic_vector(32*L-1 downto 0) := (others => '0');
+        TBL_RPTR    : in  std_logic_vector(    15 downto 0) := (others => '0');
         TBL_RDATA   : out std_logic_vector(32*L-1 downto 0);
         RND_RUN     : in  std_logic;
         RND_VAL     : out std_logic;
