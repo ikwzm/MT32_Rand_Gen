@@ -19,15 +19,17 @@ mt19937arを元にしています。
 
 * Mersenne Twister法による疑似乱数生成回路です。
 
+* 状態テーブルの数(N)は624です。
+
 * VHDLで記述しています。
 
-* 論理合成可能です。
+* 論理合成可能です。Xilinx社のVivado、Altera社のQuartusIIで確認済み。
 
 * １クロックで1、2、3、8、16ワード(1ワードは32bit)の乱数を生成します。
 
 * ジェネリック変数でSEED値を設定できます。
 
-* 状態テーブルを変更することが可能です。
+* 状態テーブルを書き換えることが可能です。
 
 
 ![Fig.1 Top-Level Signaling Interface](./readme.img/akgeo1.jpg "Fig.1 Top-Level Signaling Interface")
@@ -303,7 +305,7 @@ RAMのアドレスのタイプは次のように定義しています。
         variable retval : integer;
     begin
         retval := 0;
-        while (2**retval <= N) loop
+        while (2**(retval+1) < N) loop
             retval := retval + 1;
         end loop;
         return retval;
