@@ -111,3 +111,11 @@ set_property "file_type" "VHDL"       $file_obj
 #
 set obj [get_filesets sim_1]
 set_property "top" "TEST_BENCH"  $obj
+#
+# Set 'constrs_1' fileset object
+#
+set obj [get_filesets constrs_1]
+set files [list \
+ "[file normalize "$project_directory/timing.xdc"]"\
+]
+add_files -norecurse -fileset $obj $files
