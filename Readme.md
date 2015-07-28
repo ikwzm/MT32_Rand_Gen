@@ -131,7 +131,7 @@ Table.2 Port  Descriptions
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">in</td>
-    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が'1'の時のみ、TBL_*信号は有効です</td>
+    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が'1'の時のみ、TBL_*信号は有効ですこの信号を'1'にすると、内部のカウンタがリセットされます</td>
   </tr>
   <tr>
     <td>TBL_WE</td>
@@ -206,7 +206,7 @@ Fig.4 Block Diagram(L=1)
 <br />
 
 
-###RAMの構成(L=1)
+###RAMの構成(L=1の場合)
 
 
 MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。ところがMersenne Twisterのアルゴリズムでは、１つの乱数を生成するためには次のように状態テーブル(mt)のi、(i+1) mod  N、(i+M) mod Nの位置の値が必要です。
@@ -242,6 +242,8 @@ MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。とこ�
 ```
 
 
+
+
 1クロックで乱数を生成するには、状態テーブルから３つのアドレスのデータを同時に読み出す必要があります。通常ならライト１ポート、リード３ポートのRAMが必要ですが、基本的にiはインクリメントされるため、一つ前の乱数生成時に使用したMT[i+1]をレジスタに保存しておき、次の乱数生成時にMT[i]として使用すれば、ライト１ポート、リード２ポートのRAMで実装することが出来ます。MT32_Rand_Genでは、ライト１ポート、リード１ポートのRAMはライト１ポート、リード１ポートのRAMを二つ並べることで実装しています。
 
 
@@ -257,14 +259,46 @@ Fig.5 RAM Read and Twist Timing Chart (L=1)
 
 
 
-####RAMの構成(L>1)
+####RAMの構成(L>1の場合)
 
 
 MT32_Rand_GenではLに２、４、８、１６を指定することで、１クロックでそれぞれ2ワード、４ワード、８ワード、１６ワードの乱数を同時に生成することが出来ます。
 
-そのためには、例えばL=4の場合、MT[i]、MT[(i+1) mod N]、MT[(i+2) mod N]、MT[(i+3) mod N]、MT[(i+4) mod N]、MT[(i+0+M) mod N]、MT[(i+1+M) mod N]、MT[(i+2+M) mod N]、MT[(i+3+M) mod N]の9つの状態テーブルの値を同時に読む必要があります。
+そのためには、例えばL=4の場合、次の９箇所の状態テーブルの値を１クロックで読む必要があります。
 
-下図にMT[i]、MT[(i+1) mod N]、MT[(i+2) mod N]、MT[(i+3) mod N]、MT[(i+4) mod N]のRAM周りのブロック図を示します。
+1. i
+
+2. (i+1) mod N
+
+3. (i+2) mod N
+
+4. (i+3) mod N
+
+5. (i+4) mod N
+
+6. (i+0+M) mod N
+
+7. (i+1+M) mod N
+
+8. (i+2+M) mod N
+
+9. (i+3+M) mod N
+
+MT32_Rand_genではRAMの構成を工夫することで、状態テーブルの値を同時に読んでいます。
+
+
+
+
+
+
+
+
+
+
+
+まずは、MT[i]、MT[(i+1) mod N]、MT[(i+2) mod N]、MT[(i+3) mod N]、MT[(i+4) mod N]のRAMの構成を次図に示します。
+
+L=1の場合と同様に、MT[(i+4) mod N] の値をレジスタに保持しておき、次のMT[i]として使用します。
 
 
 ![Fig.6 Block Diagram(L=4)-1](./readme.img/akgeo6.jpg "Fig.6 Block Diagram(L=4)-1")
@@ -273,7 +307,9 @@ Fig.6 Block Diagram(L=4)-1
 
 <br />
 
-また、下図にMT[(i+0+M) mod N]、MT[(i+1+M) mod N]、MT[(i+2+M) mod N]、MT[(i+3+M) mod N]のRAM周りのブロック図を示します。
+
+
+次にMT[(i+0+M) mod N]、MT[(i+1+M) mod N]、MT[(i+2+M) mod N]、MT[(i+3+M) mod N]のRAM周りの構成を次図に示します。
 
 
 ![Fig.7 Block Diagram(L=4)-2](./readme.img/akgeo7.jpg "Fig.7 Block Diagram(L=4)-2")
@@ -499,7 +535,7 @@ Vivado 2015.1
 
 
 
-fpga/xilinx/vivado2015.1/mt32_rand_gen/create_project.tcl
+sim/vivado/create_project.tcl
 
 
 
@@ -579,5 +615,5 @@ Flow Navigator > Run Implementation
 ##Acknowledgments
 
 
-それにしても、このような貴重なアルゴリズムを惜しげもなく公開してくださった方々にはひたすら感謝です。
+このような貴重なアルゴリズムを惜しげもなく公開してくださった方々にはひたすら感謝です。
 
