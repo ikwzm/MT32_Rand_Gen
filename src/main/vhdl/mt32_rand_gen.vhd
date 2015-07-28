@@ -170,21 +170,21 @@ architecture RTL of MT32_RAND_GEN is
     signal    random_valid         : std_logic;
     signal    z_val                : std_logic;
     signal    z                    : RANDOM_NUMBER_VECTOR(0 to L-1);
+    signal    mt_mdata             : RANDOM_NUMBER_VECTOR(0 to L-1);
     signal    mt_xdata             : RANDOM_NUMBER_VECTOR(0 to L-1);
-    signal    mt_ydata             : RANDOM_NUMBER_VECTOR(0 to L-1);
     signal    mt_wdata             : RANDOM_NUMBER_VECTOR(0 to L-1);
     signal    mt_rdata             : RANDOM_NUMBER_VECTOR(0 to L-1);
     signal    mt_waddr             : MT_PTR_TYPE;
     signal    mt_write             : std_logic_vector    (0 to L-1);
     signal    mt_read              : std_logic;
-    signal    mt_curr_yaddr        : MT_PTR_TYPE;
-    signal    mt_next_yaddr        : MT_PTR_TYPE;
     signal    mt_curr_xaddr        : MT_PTR_TYPE;
     signal    mt_next_xaddr        : MT_PTR_TYPE;
-    signal    y_curr_index         : MT_PTR_TYPE;
-    signal    y_next_index         : MT_PTR_TYPE;
+    signal    mt_curr_maddr        : MT_PTR_TYPE;
+    signal    mt_next_maddr        : MT_PTR_TYPE;
     signal    x_curr_index         : MT_PTR_TYPE;
     signal    x_next_index         : MT_PTR_TYPE;
+    signal    m_curr_index         : MT_PTR_TYPE;
+    signal    m_next_index         : MT_PTR_TYPE;
     signal    z_curr_index         : MT_PTR_TYPE;
     -------------------------------------------------------------------------------
     -- 
@@ -212,34 +212,34 @@ begin
     -------------------------------------------------------------------------------
     CTRL: process(CLK,RST) begin
         if (RST = '1') then
-                y_curr_index <= TO_MT_PTR(0);
-                y_next_index <= TO_MT_PTR(0);
-                x_curr_index <= TO_MT_PTR(M);
-                x_next_index <= TO_MT_PTR(M);
+                x_curr_index <= TO_MT_PTR(0);
+                x_next_index <= TO_MT_PTR(0);
+                m_curr_index <= TO_MT_PTR(M);
+                m_next_index <= TO_MT_PTR(M);
                 z_curr_index <= TO_MT_PTR(0);
                 mt_read      <= '0';
                 z_val        <= '0';
         elsif (CLK'event and CLK = '1') then
             if    (TBL_INIT='1') then
-                y_curr_index <= TO_MT_PTR(0);
-                y_next_index <= TO_MT_PTR(0);
-                x_curr_index <= TO_MT_PTR(M);
-                x_next_index <= TO_MT_PTR(M);
+                x_curr_index <= TO_MT_PTR(0);
+                x_next_index <= TO_MT_PTR(0);
+                m_curr_index <= TO_MT_PTR(M);
+                m_next_index <= TO_MT_PTR(M);
                 z_curr_index <= TO_MT_PTR(0);
                 mt_read      <= '0';
                 z_val        <= '0';
             else
                 if (RND_RUN = '1')then
-                    y_curr_index <= y_next_index;
-                    y_next_index <= INC_MT_PTR(y_next_index);
                     x_curr_index <= x_next_index;
                     x_next_index <= INC_MT_PTR(x_next_index);
+                    m_curr_index <= m_next_index;
+                    m_next_index <= INC_MT_PTR(m_next_index);
                     mt_read      <= '1';
                 else
                     mt_read      <= '0';
                 end if;
                 if (mt_read = '1') then
-                    z_curr_index <= y_curr_index;
+                    z_curr_index <= x_curr_index;
                     z_val        <= '1';
                 else
                     z_val        <= '0';
@@ -251,10 +251,10 @@ begin
     -- 
     -------------------------------------------------------------------------------
     mt_waddr      <= z_curr_index when (TBL_INIT='0') else TBL_WPTR(MT_PTR_TYPE'range);
-    mt_curr_yaddr <= y_curr_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
-    mt_next_yaddr <= y_next_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
     mt_curr_xaddr <= x_curr_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
     mt_next_xaddr <= x_next_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
+    mt_curr_maddr <= m_curr_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
+    mt_next_maddr <= m_next_index when (TBL_INIT='0') else TBL_RPTR(MT_PTR_TYPE'range);
     -------------------------------------------------------------------------------
     -- 
     -------------------------------------------------------------------------------
@@ -270,7 +270,7 @@ begin
         ---------------------------------------------------------------------------
         -- 
         ---------------------------------------------------------------------------
-        MT_Y_U:if (i = 0) generate
+        MT_X_U:if (i = 0) generate
           signal mt_curr_upper : std_logic_vector(UPPER'range);
         begin 
             U:MT32_RAND_RAM
@@ -286,7 +286,7 @@ begin
                     WE    => mt_write(0),
                     WADDR => mt_waddr,
                     WDATA => mt_wdata(0),
-                    RADDR => mt_next_yaddr,
+                    RADDR => mt_next_xaddr,
                     RDATA => mt_rdata(0)
                 );
             process (CLK, RST) begin
@@ -298,13 +298,13 @@ begin
                     end if;
                 end if;
             end process;
-            mt_ydata(0  )(UPPER'range) <= mt_curr_upper;
-            mt_ydata(L-1)(LOWER'range) <= mt_rdata(0)(LOWER'range);
+            mt_xdata(0  )(UPPER'range) <= mt_curr_upper;
+            mt_xdata(L-1)(LOWER'range) <= mt_rdata(0)(LOWER'range);
         end generate;
         ---------------------------------------------------------------------------
         -- 
         ---------------------------------------------------------------------------
-        MT_Y_M: if (i > 0) generate
+        MT_X_M: if (i > 0) generate
             U: MT32_RAND_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
@@ -318,20 +318,20 @@ begin
                     WE    => mt_write(i),
                     WADDR => mt_waddr,
                     WDATA => mt_wdata(i),
-                    RADDR => mt_curr_yaddr,
+                    RADDR => mt_curr_xaddr,
                     RDATA => mt_rdata(i)
                 );
-            mt_ydata(i  )(UPPER'range) <= mt_rdata(i)(UPPER'range);
-            mt_ydata(i-1)(LOWER'range) <= mt_rdata(i)(LOWER'range);
+            mt_xdata(i  )(UPPER'range) <= mt_rdata(i)(UPPER'range);
+            mt_xdata(i-1)(LOWER'range) <= mt_rdata(i)(LOWER'range);
         end generate;
         ---------------------------------------------------------------------------
         -- 
         ---------------------------------------------------------------------------
-        MT_X:block
-            signal mt_xaddr : MT_PTR_TYPE;
+        MT_M:block
+            signal mt_maddr : MT_PTR_TYPE;
         begin
-            mt_xaddr <= mt_curr_xaddr when (i >= (M mod L)) else
-                           mt_next_xaddr;
+            mt_maddr <= mt_curr_maddr when (i >= (M mod L)) else
+                        mt_next_maddr;
             U: MT32_RAND_RAM
                 generic map(
                     DEPTH => MT_PTR_TYPE'length,
@@ -344,16 +344,16 @@ begin
                     CLK   => CLK,
                     WE    => mt_write(i),
                     WADDR => mt_waddr,
-                    RADDR => mt_xaddr,
+                    RADDR => mt_maddr,
                     WDATA => mt_wdata(i),
-                    RDATA => mt_xdata((L+i-(M mod L)) mod L)
+                    RDATA => mt_mdata((L+i-(M mod L)) mod L)
                 );
         end block;
         ---------------------------------------------------------------------------
         -- 
         ---------------------------------------------------------------------------
-        mg   <= MATRIX_A when (mt_ydata(i)(0) = '1') else (others => '0');
-        z(i) <= mt_xdata(i) xor shift_right(mt_ydata(i),1) xor mg;
+        mg   <= MATRIX_A when (mt_xdata(i)(0) = '1') else (others => '0');
+        z(i) <= mt_mdata(i) xor shift_right(mt_xdata(i),1) xor mg;
         random_number(i) <= Tempering(z(i));
     end generate;
     random_valid <= z_val;
