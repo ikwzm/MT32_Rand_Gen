@@ -213,7 +213,7 @@ MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。とこ�
 
 
 ```VHDL:mt19937ar.vhd
- procedure generate_word(
+    procedure generate_word(
         variable generator  : inout PSEUDO_RANDOM_NUMBER_GENERATOR_TYPE;
         variable result     : out   RANDOM_NUMBER_TYPE
     ) is
@@ -238,7 +238,7 @@ MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。とこ�
         y  := y xor ((y sll 15) and X"efc60000");
         y  := y xor ((y srl 18));
         result := y;
-    end procedure;
+    end procedure; 
 ```
 
 
@@ -606,6 +606,26 @@ Flow Navigator > Run Synthesis
 
 
 Flow Navigator > Run Implementation
+
+
+
+
+
+###QuartusIIによる論理合成
+
+
+####QuartusIIのバージョン
+
+
+QuartusII 13.1sp1
+
+
+
+
+####QuartusII用のプロジェクト
+
+
+fpga/altera/13.1sp1/mt32_rand_gen.qpf
 
 
 
