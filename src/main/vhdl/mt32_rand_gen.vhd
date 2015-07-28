@@ -133,7 +133,7 @@ architecture RTL of MT32_RAND_GEN is
         variable retval : integer;
     begin
         retval := 0;
-        while (2**retval <= N) loop
+        while (2**(retval+1) < N) loop
             retval := retval + 1;
         end loop;
         return retval;
