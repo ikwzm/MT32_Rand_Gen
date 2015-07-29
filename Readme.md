@@ -189,6 +189,114 @@ Fig.3 Generate Timing (L=4)
 
 
 
+###Resouces and Performance
+
+
+Xilinx社のFPGAで実装してみた結果を以下に示します。
+
+Parameter のRAM は、内部メモリにBRAM(Block RAM)を使うか、LUTを使うかを指定しています。Performanceの生成速度は１秒間に生成できるワード数(1ワードは32bit)の理論値です。
+
+Table.3 Resouces and Performance(Xilinx)
+
+<table border="2">
+  <tr>
+    <td align="center" colspan="2">Device</td>
+    <td align="center" colspan="2">Parameter</td>
+    <td align="center" colspan="2">Resouces</td>
+    <td align="center" colspan="2">Performance</td>
+  </tr>
+  <tr>
+    <td align="center">Family</td>
+    <td align="center">Speed</td>
+    <td align="center">L</td>
+    <td align="center">RAM</td>
+    <td align="center">Slices</td>
+    <td align="center">RAMB</td>
+    <td align="center">Fmax</td>
+    <td align="center">Generate word/sec</td>
+  </tr>
+  <tr>
+    <td rowspan="10">Artix-7</td>
+    <td align="center" rowspan="10">3</td>
+    <td align="center" rowspan="2">1</td>
+    <td align="center">BRAM</td>
+    <td align="right">112</td>
+    <td align="center">2</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">250[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center">LUT</td>
+    <td align="right">1815</td>
+    <td align="center">0</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">250[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="2">2</td>
+    <td align="center">BRAM</td>
+    <td align="right">221</td>
+    <td align="center">4</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">500[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center">LUT</td>
+    <td align="right">1911</td>
+    <td align="center">0</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">500[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="2">4</td>
+    <td align="center">BRAM</td>
+    <td align="right">443</td>
+    <td align="center">8</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">1000[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center">LUT</td>
+    <td align="right">2101</td>
+    <td align="center">0</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">1000[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="2">8</td>
+    <td align="center">BRAM</td>
+    <td align="right">894</td>
+    <td align="center">16</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">2000[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center">LUT</td>
+    <td align="right">2784</td>
+    <td align="center">0</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">2000[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center" rowspan="2">16</td>
+    <td align="center">BRAM</td>
+    <td align="right">1844</td>
+    <td align="center">32</td>
+    <td align="right">238[MHz]</td>
+    <td align="right">3808[Mword/sec]</td>
+  </tr>
+  <tr>
+    <td align="center">LUT</td>
+    <td align="right">3098</td>
+    <td align="center">0</td>
+    <td align="right">250[MHz]</td>
+    <td align="right">4000[Mword/sec]</td>
+  </tr>
+</table>
+
+
+
+
 
 ##Architecture
 
@@ -465,7 +573,7 @@ TEST_BENCH = test_bench \\
 all: $(TEST_BENCH)
 clean:
 	rm -f *.o *.cf $(TEST_BENCH)
-test_bench: mt19937ar.o test_bench.o mt32_rand_gen.o mt32_rand_ram.o
+test_bench: mt19937ar.o test_bench.o mt32_rand_gen.o mt32_rand_ram.o mt32_rand_ram_auto.o 
 	 $(GHDL) -e $(GHDLFLAGS) $@
 	-$(GHDL) -r $(GHDLRUNFLAGS) $@
 test_bench.o    :  ../../src/test/vhdl/test_bench.vhd mt32_rand_gen.o
@@ -473,6 +581,8 @@ test_bench.o    :  ../../src/test/vhdl/test_bench.vhd mt32_rand_gen.o
 mt32_rand_gen.o :  ../../src/main/vhdl/mt32_rand_gen.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=mt32_rand_gen $<
 mt32_rand_ram.o:  ../../src/main/vhdl/mt32_rand_ram.vhd
+	$(GHDL) -a $(GHDLFLAGS) --work=mt32_rand_gen $<
+mt32_rand_ram_auto.o:  ../../src/main/vhdl/mt32_rand_ram_auto.vhd mt32_rand_ram.o
 	$(GHDL) -a $(GHDLFLAGS) --work=mt32_rand_gen $<
 mt19937ar.o    :  ../../src/main/vhdl/mt19937ar.vhd
 	$(GHDL) -a $(GHDLFLAGS) --work=mt32_rand_gen $<
@@ -492,6 +602,7 @@ ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt19937ar.vhd
 ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt32_rand_gen.vhd
 ghdl -a --mb-comments --work=work ../../src/test/vhdl/test_bench.vhd
 ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt32_rand_ram.vhd
+ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt32_rand_ram_auto.vhd
 ghdl -e --mb-comments test_bench
 ghdl -r  test_bench
 ../../../src/ieee/numeric_std-body.v93:2098:7:@0ms:(assertion warning): NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
