@@ -62,9 +62,9 @@ begin
     process (CLK) begin
         if (CLK'event and CLK = '1') then
             if (WE = '1') then
-                ram(to_integer(unsigned(WADDR))) <= WDATA;
+                ram(to_integer(to_01(unsigned(WADDR)))) <= WDATA;
             end if;
-            RDATA <= ram(to_integer(unsigned(RADDR)));
+            RDATA <= ram(to_integer(to_01(unsigned(RADDR))));
         end if;
     end process;
 end AUTO;

@@ -605,8 +605,6 @@ ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt32_rand_ram.vhd
 ghdl -a --mb-comments --work=mt32_rand_gen ../../src/main/vhdl/mt32_rand_ram_auto.vhd
 ghdl -e --mb-comments test_bench
 ghdl -r  test_bench
-../../../src/ieee/numeric_std-body.v93:2098:7:@0ms:(assertion warning): NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
-../../../src/ieee/numeric_std-body.v93:2098:7:@0ms:(assertion warning): NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
  check prgn_1.table
  1000 outputs of genrand_int32()
 2991312382 3062119789 1228959102 1840268610  974319580 
