@@ -8,7 +8,7 @@ Mersenne Twister Pseudo Random Number Generator
 ## Introduction
 
 
-このIPはMersenne Twister法による疑似乱数生成回路です。
+このIPはMersenne Twister法による擬似乱数生成回路です。
 
 こちらを参考に書いてみました。Mersenne Twister HomePage (http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/mt.html)
 
@@ -18,7 +18,7 @@ mt19937arを元にしています。
 ## Features
 
 
-* Mersenne Twister法による疑似乱数生成回路です。
+* Mersenne Twister法による擬似乱数生成回路です。
 
 * 状態テーブルの数(N)は624です。
 
