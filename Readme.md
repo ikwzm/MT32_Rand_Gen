@@ -2,7 +2,13 @@ Mersenne Twister Pseudo Random Number Generator
 ===============================================
 
 
+
+
+
+
+
 # Overview
+
 
 
 ## Introduction
@@ -19,17 +25,11 @@ mt19937arを元にしています。
 
 
 * Mersenne Twister法による擬似乱数生成回路です。
-
 * 状態テーブルの数(N)は624です。
-
 * VHDLで記述しています。
-
 * 論理合成可能です。Xilinx社のVivado、Altera社のQuartusIIで確認済み。
-
 * １クロックで1、2、3、8、16ワード(1ワードは32bit)の乱数を生成します。
-
 * ジェネリック変数でSEED値を設定できます。
-
 * 状態テーブルを書き換えることが可能です。
 
 
@@ -46,8 +46,8 @@ Fig.1 Top-Level Signaling Interface
 二条項BSDライセンス (2-clause BSD license) で公開しています。
 
 
-
 # Specification
+
 
 
 ## Parameter Descriptions
@@ -111,28 +111,28 @@ Table.2 Port  Descriptions
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">in</td>
-    <td>乱数生成開始信号<br />この信号が'1'になってから３クロック後に乱数を出力します<br />TBL_INITが'1'の時、この信号を'1'にしてはいけません</td>
+    <td>乱数生成開始信号<br />この信号が&#39;1&#39;になってから３クロック後に乱数を出力します<br />TBL_INITが&#39;1&#39;の時、この信号を&#39;1&#39;にしてはいけません</td>
   </tr>
   <tr>
     <td>RND_VAL</td>
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">out</td>
-    <td>乱数有効信号<br />RND_NUMより生成された乱数が有効であることをしめす信号<br />RND_RUNが'1'になってから3クロック後に'1'になります</td>
+    <td>乱数有効信号<br />RND_NUMより生成された乱数が有効であることをしめす信号<br />RND_RUNが&#39;1&#39;になってから3クロック後に&#39;1&#39;になります</td>
   </tr>
   <tr>
     <td>RND_NUM</td>
     <td align="center">STD_LOGIC_VECTOR</td>
     <td align="center">32*L</td>
     <td align="center">out</td>
-    <td>乱数出力信号<br />生成された乱数を出力する信号<br />RND_RUNが'1'になってから３クロック後に乱数を出力します</td>
+    <td>乱数出力信号<br />生成された乱数を出力する信号<br />RND_RUNが&#39;1&#39;になってから３クロック後に乱数を出力します</td>
   </tr>
   <tr>
     <td>TBL_INIT</td>
     <td align="center">STD_LOGIC</td>
     <td align="center">1</td>
     <td align="center">in</td>
-    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が'1'の時のみ、TBL_*信号は有効ですこの信号を'1'にすると、内部のカウンタがリセットされます</td>
+    <td>状態テーブル・初期化信号<br />状態テーブルを初期化することを示します<br />この信号が&#39;1&#39;の時のみ、TBL_*信号は有効ですこの信号を&#39;1&#39;にすると、内部のカウンタがリセットされます</td>
   </tr>
   <tr>
     <td>TBL_WE</td>
@@ -298,8 +298,8 @@ Table.3 Resouces and Performance(Xilinx)
 
 
 
-
 # Architecture
+
 
 
 ## Block Diagram
@@ -365,6 +365,7 @@ MT32_Rand_Gen は１クロックで１〜Lの乱数を生成します。とこ�
 Fig.5 RAM Read and Twist Timing Chart (L=1)
 
 <br />
+
 
 
 
@@ -493,11 +494,8 @@ RAMのアドレスのタイプは次のように定義しています。
 ここで各信号の意味は次の通り。
 
   * x_curr_index = ((i) mod N)/L
-
   * x_next_index = ((i+L) mod N)/L
-
   * m_curr_index = ((i+M) mod N)/L
-
   * m_next_index = ((i+L+M) mod N)/L
 
 
@@ -543,12 +541,12 @@ RAMのアドレスのタイプは次のように定義しています。
 
 
 
-
-
 # Simulation
 
 
+
 ## GHDLによるシミュレーション
+
 
 
 ### GHDLのバージョン
@@ -626,8 +624,8 @@ ghdl: compilation error
 
 
 
-
 ## Vivadoによるシミュレーション
+
 
 
 ### Vivadoのバージョン
@@ -666,12 +664,12 @@ Vivado > Open Project > mt32_rand_gen.xpr
 Flow Navigator > Run Simulation > Run Behavioral Simulation
 
 
-
-
 # Synthesis and Implementation
 
 
+
 ## Vivadoによる論理合成
+
 
 
 ### Vivadoのバージョン
@@ -720,8 +718,8 @@ Flow Navigator > Run Implementation
 
 
 
-
 ## QuartusIIによる論理合成
+
 
 
 ### QuartusIIのバージョン
@@ -740,10 +738,7 @@ fpga/altera/13.1sp1/mt32_rand_gen.qpf
 
 
 
-
-
 # Acknowledgments
 
 
 このような貴重なアルゴリズムを惜しげもなく公開してくださった方々にはひたすら感謝です。
-
